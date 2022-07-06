@@ -10,22 +10,15 @@ import javax.annotation.Resource;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-import idv.blake.cathy.CathyApplication;
+import idv.blake.cathy.BaseUnitTest;
 import idv.blake.cathy.model.currency.CurrencyServiceV1;
 import idv.blake.cathy.model.entity.coindesk.CoindeskCurrentPriceResponse;
 import idv.blake.cathy.model.entity.coindesk.convert.CoindeskCurrrentPriceConvertResponse;
@@ -33,10 +26,7 @@ import idv.blake.cathy.model.entity.currency.CurrencyLangRequest;
 import idv.blake.cathy.model.entity.currency.CurrencyLangResponse;
 import idv.blake.cathy.util.StringUtil;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CathyApplication.class)
-@WebAppConfiguration
-class CurrencyControllerTest {
+class CurrencyControllerTest extends BaseUnitTest {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -57,6 +47,7 @@ class CurrencyControllerTest {
 	 * 
 	 * @throws Exception
 	 */
+	@Deprecated
 	void testGetCoindeskCurrentPrice() throws Exception {
 		MockMvc mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
@@ -316,14 +307,6 @@ class CurrencyControllerTest {
 		assertEquals("zh_CN", response.getLang());
 		assertEquals("阿拉伯联合酋长国迪拉姆国", response.getName());
 
-	}
-
-	public static String toJson(Object obj) {
-		return new Gson().toJson(obj);
-	}
-
-	public <T> T fromJson(String json, Class<T> classOfT) throws JsonSyntaxException {
-		return new Gson().fromJson(json, classOfT);
 	}
 
 }

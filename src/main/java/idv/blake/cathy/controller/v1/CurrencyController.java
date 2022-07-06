@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import idv.blake.cathy.model.currency.CurrencyServiceV1;
-import idv.blake.cathy.model.entity.coindesk.CoindeskCurrentPriceResponse;
-import idv.blake.cathy.model.entity.coindesk.convert.CoindeskCurrrentPriceConvertResponse;
 import idv.blake.cathy.model.entity.currency.CurrencyLangRequest;
 import idv.blake.cathy.model.entity.currency.CurrencyLangResponse;
 import idv.blake.cathy.model.exception.DuplicateDataException;
@@ -34,51 +32,51 @@ public class CurrencyController {
 	@Resource(name = "CurrencyServiceV1")
 	private CurrencyServiceV1 currencyServiceV1;
 
-	/**
-	 * 
-	 * 呼叫coindesk API
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/coindesk/currentprice", method = { RequestMethod.GET })
-	@ResponseBody
-	public CoindeskCurrentPriceResponse getCoindeskCurrentPrice(HttpServletRequest request,
-			HttpServletResponse response) {
-
-		try {
-			return currencyServiceV1.getCoindeskCurrentPrice();
-		} catch (Exception e) {
-			response.setStatus(500);
-			return null;
-		}
-	}
-
-	/**
-	 * 
-	 * 呼叫coindesk 轉換 API
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/coindesk/currentprice/convert", method = { RequestMethod.GET })
-	@ResponseBody
-	public CoindeskCurrrentPriceConvertResponse getCoindeskCurrentPriceConvert(HttpServletRequest request,
-			HttpServletResponse response) {
-
-		try {
-			return currencyServiceV1.getCoindeskCurrentPriceConvet();
-		} catch (NotFoundException e) {
-			response.setStatus(204);
-			return null;
-
-		} catch (Exception e) {
-			response.setStatus(500);
-			return null;
-		}
-	}
+//	/**
+//	 * 
+//	 * 呼叫coindesk API
+//	 * 
+//	 * @param request
+//	 * @param response
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/coindesk/currentprice", method = { RequestMethod.GET })
+//	@ResponseBody
+//	public CoindeskCurrentPriceResponse getCoindeskCurrentPrice(HttpServletRequest request,
+//			HttpServletResponse response) {
+//
+//		try {
+//			return currencyServiceV1.getCoindeskCurrentPrice();
+//		} catch (Exception e) {
+//			response.setStatus(500);
+//			return null;
+//		}
+//	}
+//
+//	/**
+//	 * 
+//	 * 呼叫coindesk 轉換 API
+//	 * 
+//	 * @param request
+//	 * @param response
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/coindesk/currentprice/convert", method = { RequestMethod.GET })
+//	@ResponseBody
+//	public CoindeskCurrrentPriceConvertResponse getCoindeskCurrentPriceConvert(HttpServletRequest request,
+//			HttpServletResponse response) {
+//
+//		try {
+//			return currencyServiceV1.getCoindeskCurrentPriceConvet();
+//		} catch (NotFoundException e) {
+//			response.setStatus(204);
+//			return null;
+//
+//		} catch (Exception e) {
+//			response.setStatus(500);
+//			return null;
+//		}
+//	}
 
 	/**
 	 * 
