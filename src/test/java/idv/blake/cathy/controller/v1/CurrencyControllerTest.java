@@ -42,9 +42,9 @@ class CurrencyControllerTest {
 	private WebApplicationContext webApplicationContext;
 
 	private String createCurrencyNameUrl = "/v1/currency/lang";
-	private String getCurrencyNameUrl = "/v1/currency/lang/%s";
-	private String updateCurrencyNameUrl = "/v1/currency/lang/%s";
-	private String deleteCurrencyNameUrl = "/v1/currency/lang/%s";
+	private String getCurrencyNameUrl = "/v1/currency/lang/%s/%s";
+	private String updateCurrencyNameUrl = "/v1/currency/lang/%s/%s";
+	private String deleteCurrencyNameUrl = "/v1/currency/lang/%s/%s";
 	private String coindeskCurrentPrice = "/v1/currency/coindesk/currentprice";
 	private String coindeskCurrentPriceConvert = "/v1/currency/coindesk/currentprice/convert";
 
@@ -57,7 +57,6 @@ class CurrencyControllerTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
 	void testGetCoindeskCurrentPrice() throws Exception {
 		MockMvc mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
@@ -75,9 +74,11 @@ class CurrencyControllerTest {
 		// 測試轉換後的資料
 
 		// 新增歐元幣別
-		result = mvc.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
-				.header("Content-TYPE", MediaType.APPLICATION_JSON)
-				.content(toJson(new CurrencyLangRequest("EUR", "歐元")))).andExpect(status().is(200)).andReturn();
+		result = mvc
+				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
+						.header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("EUR", "zh_TW", "歐元"))))
+				.andExpect(status().is(200)).andReturn();
 
 		System.out.println("================coindesk API 轉換內容================");
 		result = mvc.perform(MockMvcRequestBuilders.get(coindeskCurrentPriceConvert).accept(MediaType.APPLICATION_JSON))
@@ -102,7 +103,7 @@ class CurrencyControllerTest {
 		result = mvc
 				.perform(MockMvcRequestBuilders.put(String.format(updateCurrencyNameUrl, "EUR"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("EUR", "歐元2"))))
+						.content(toJson(new CurrencyLangRequest("EUR", "zh_TW", "歐元2"))))
 				.andExpect(status().is(200)).andReturn();
 
 		result = mvc.perform(MockMvcRequestBuilders.get(coindeskCurrentPriceConvert).accept(MediaType.APPLICATION_JSON))
@@ -141,60 +142,76 @@ class CurrencyControllerTest {
 
 		// create currency lang1
 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl)
-				.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
-				.content(toJson(new CurrencyLangRequest(null, null)))).andExpect(status().is(419)).andReturn();
-
-		result = mvc.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
-				.header("Content-TYPE", MediaType.APPLICATION_JSON)
-				.content(toJson(new CurrencyLangRequest("AED", null)))).andExpect(status().is(419)).andReturn();
-
-		result = mvc
+		MvcResult result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest(null, "阿拉伯聯合酋長國迪拉姆國"))))
+						.content(toJson(new CurrencyLangRequest(null, null, null))))
 				.andExpect(status().is(419)).andReturn();
 
 		result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("AEDA", "阿拉伯聯合酋長國迪拉姆國"))))
+						.content(toJson(new CurrencyLangRequest("AED", null, null))))
 				.andExpect(status().is(419)).andReturn();
 
 		result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("AED", "一二三四五一二三四五一二三四五一"))))
+						.content(toJson(new CurrencyLangRequest(null, null, "阿拉伯聯合酋長國迪拉姆國"))))
 				.andExpect(status().is(419)).andReturn();
 
 		result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("AED", "一二三四五一二三四五一二三四五"))))
+						.content(toJson(new CurrencyLangRequest("AEDA", "zh_TW", "阿拉伯聯合酋長國迪拉姆國"))))
+				.andExpect(status().is(419)).andReturn();
+
+		result = mvc
+				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
+						.header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("AED", "zh_TW", "一二三四五一二三四五一二三四五一"))))
+				.andExpect(status().is(419)).andReturn();
+
+		result = mvc
+				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
+						.header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("AED", "zh_TW", "一二三四五一二三四五一二三四五"))))
 				.andExpect(status().is(200)).andReturn();
 
 		result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("AED", "阿拉伯聯合酋長國迪拉姆國"))))
+						.content(toJson(new CurrencyLangRequest("AED", "zh_CN", "阿拉伯联合酋长国迪拉姆国"))))
+				.andExpect(status().is(200)).andReturn();
+
+		result = mvc
+				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
+						.header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("AED", "zh_TW", "阿拉伯聯合酋長國迪拉姆國"))))
 				.andExpect(status().is(409)).andReturn();
 
 		result = mvc
 				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
 						.header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("TWD", "新台幣"))))
+						.content(toJson(new CurrencyLangRequest("TWD", "zh_TW", "新台幣"))))
+				.andExpect(status().is(200)).andReturn();
+
+		result = mvc
+				.perform(MockMvcRequestBuilders.post(createCurrencyNameUrl).accept(MediaType.APPLICATION_JSON)
+						.header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("TWD", "zh_CN", "新台币"))))
 				.andExpect(status().is(200)).andReturn();
 
 		// get currency lang
 
 		result = mvc
-				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "USD"))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "USD", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(204)).andReturn();
 
 		System.out.println("=============取的幣別資料內容=============");
 		result = mvc
-				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED"))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn();
 		System.out.println(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
@@ -203,20 +220,12 @@ class CurrencyControllerTest {
 				CurrencyLangResponse.class);
 
 		assertEquals("AED", response.getCode());
+		assertEquals("zh_TW", response.getLang());
 		assertEquals("一二三四五一二三四五一二三四五", response.getName());
 
-		// update currency lang
-		result = mvc.perform(MockMvcRequestBuilders.put(String.format(updateCurrencyNameUrl, "USD"))
-				.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
-				.content(toJson(new CurrencyLangRequest("USD", "美元")))).andExpect(status().is(204)).andReturn();
-
-		// 確認更新後的資料
-
-		System.out.println("================更新後資料內容================");
 		result = mvc
-				.perform(MockMvcRequestBuilders.put(String.format(updateCurrencyNameUrl, "AED"))
-						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
-						.content(toJson(new CurrencyLangRequest("AED", "阿拉伯聯合酋長國迪拉姆國"))))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_CN"))
+						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn();
 		System.out.println(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
@@ -224,11 +233,36 @@ class CurrencyControllerTest {
 				CurrencyLangResponse.class);
 
 		assertEquals("AED", response.getCode());
+		assertEquals("zh_CN", response.getLang());
+		assertEquals("阿拉伯联合酋长国迪拉姆国", response.getName());
+
+		// update currency lang
+		result = mvc
+				.perform(MockMvcRequestBuilders.put(String.format(updateCurrencyNameUrl, "USD", "zh_TW"))
+						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("USD", "zh_TW", "美元"))))
+				.andExpect(status().is(204)).andReturn();
+
+		// 確認更新後的資料
+
+		System.out.println("================更新後資料內容================");
+		result = mvc
+				.perform(MockMvcRequestBuilders.put(String.format(updateCurrencyNameUrl, "AED", "zh_TW"))
+						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON)
+						.content(toJson(new CurrencyLangRequest("AED", "zh_TW", "阿拉伯聯合酋長國迪拉姆國"))))
+				.andExpect(status().is(200)).andReturn();
+		System.out.println(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+
+		response = fromJson(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+				CurrencyLangResponse.class);
+
+		assertEquals("zh_TW", response.getLang());
+		assertEquals("AED", response.getCode());
 		assertEquals("阿拉伯聯合酋長國迪拉姆國", response.getName());
 
 		// 取得資料確定是否有更新
 		result = mvc
-				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED"))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn();
 		response = fromJson(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
@@ -236,26 +270,51 @@ class CurrencyControllerTest {
 		assertEquals("AED", response.getCode());
 		assertEquals("阿拉伯聯合酋長國迪拉姆國", response.getName());
 
+		result = mvc
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_CN"))
+						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andReturn();
+		System.out.println(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+
+		response = fromJson(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+				CurrencyLangResponse.class);
+
+		assertEquals("AED", response.getCode());
+		assertEquals("zh_CN", response.getLang());
+		assertEquals("阿拉伯联合酋长国迪拉姆国", response.getName());
+
 		// test delete currency lang
 		result = mvc
-				.perform(MockMvcRequestBuilders.delete(String.format(deleteCurrencyNameUrl, "AED"))
+				.perform(MockMvcRequestBuilders.delete(String.format(deleteCurrencyNameUrl, "AED", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn();
 
 		result = mvc
-				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED"))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(204)).andReturn();
 
 		// 檢查是否有誤刪
 		result = mvc
-				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "TWD"))
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "TWD", "zh_TW"))
 						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn();
 		response = fromJson(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
 				CurrencyLangResponse.class);
 		assertEquals("TWD", response.getCode());
 		assertEquals("新台幣", response.getName());
+
+		result = mvc
+				.perform(MockMvcRequestBuilders.get(String.format(getCurrencyNameUrl, "AED", "zh_CN"))
+						.accept(MediaType.APPLICATION_JSON).header("Content-TYPE", MediaType.APPLICATION_JSON))
+				.andExpect(status().is(200)).andReturn();
+
+		response = fromJson(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+				CurrencyLangResponse.class);
+
+		assertEquals("AED", response.getCode());
+		assertEquals("zh_CN", response.getLang());
+		assertEquals("阿拉伯联合酋长国迪拉姆国", response.getName());
 
 	}
 

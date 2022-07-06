@@ -50,7 +50,6 @@ public class CurrencyController {
 		try {
 			return currencyServiceV1.getCoindeskCurrentPrice();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			response.setStatus(500);
 			return null;
 		}
@@ -76,7 +75,6 @@ public class CurrencyController {
 			return null;
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			response.setStatus(500);
 			return null;
 		}
@@ -101,13 +99,15 @@ public class CurrencyController {
 
 		} catch (InvalidArgumentException e) {
 			response.setStatus(419);
+			e.printStackTrace();
 
 		} catch (DuplicateDataException e) {
 			response.setStatus(409);
+			e.printStackTrace();
 
 		} catch (Exception e) {
 			response.setStatus(500);
-
+			e.printStackTrace();
 		}
 	}
 
@@ -119,22 +119,25 @@ public class CurrencyController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/lang/{code}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/lang/{code}/{lang}", method = { RequestMethod.GET })
 	@ResponseBody
-	public CurrencyLangResponse getCurrencyName(@PathVariable("code") String code, HttpServletRequest request,
-			HttpServletResponse response) {
+	public CurrencyLangResponse getCurrencyName(@PathVariable("code") String code, @PathVariable("lang") String lang,
+			HttpServletRequest request, HttpServletResponse response) {
 
 		try {
 
-			return currencyServiceV1.getCurrencyLang(code);
+			return currencyServiceV1.getCurrencyLang(code, lang);
 
 		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
 			response.setStatus(419);
 
 		} catch (NotFoundException e) {
+			e.printStackTrace();
 			response.setStatus(204);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.setStatus(500);
 		}
 
@@ -149,22 +152,25 @@ public class CurrencyController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/lang/{code}", method = { RequestMethod.PUT })
+	@RequestMapping(value = "/lang/{code}/{lang}", method = { RequestMethod.PUT })
 	@ResponseBody
-	public CurrencyLangResponse updateCurrencyName(@PathVariable("code") String code,
+	public CurrencyLangResponse updateCurrencyName(@PathVariable("code") String code, @PathVariable("lang") String lang,
 			@RequestBody CurrencyLangRequest requestBody, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			return currencyServiceV1.updateCurrencyLang(code, requestBody);
+			return currencyServiceV1.updateCurrencyLang(code, lang, requestBody);
 
 		} catch (InvalidArgumentException e) {
 			response.setStatus(419);
+			e.printStackTrace();
 
 		} catch (NotFoundException e) {
 			response.setStatus(204);
+			e.printStackTrace();
 
 		} catch (Exception e) {
 			response.setStatus(500);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -177,13 +183,13 @@ public class CurrencyController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/lang/{code}", method = { RequestMethod.DELETE })
+	@RequestMapping(value = "/lang/{code}/{lang}", method = { RequestMethod.DELETE })
 	@ResponseBody
-	public void deleteCurrencyName(@PathVariable("code") String code, HttpServletRequest request,
-			HttpServletResponse response) {
+	public void deleteCurrencyName(@PathVariable("code") String code, @PathVariable("lang") String lang,
+			HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			currencyServiceV1.deleteCurrencyLang(code);
+			currencyServiceV1.deleteCurrencyLang(code, lang);
 
 		} catch (InvalidArgumentException e) {
 			response.setStatus(419);

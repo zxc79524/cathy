@@ -11,7 +11,9 @@ public interface ICurrencyLangDao extends CrudRepository<CurrencyLangDbEntity, S
 
 	CurrencyLangDbEntity findByCode(String code);
 
+	CurrencyLangDbEntity findByCodeAndLang(String code, String lang);
+
 	@Transactional
-	void deleteByCode(String code);
+	void deleteByCodeAndLang(String code, String lang);
 
 }

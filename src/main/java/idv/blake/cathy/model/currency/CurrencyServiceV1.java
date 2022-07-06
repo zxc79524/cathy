@@ -37,7 +37,7 @@ public class CurrencyServiceV1 {
 	ICurrencyLangDao dao;
 
 	/**
-	 * 建立幣別資料
+	 * 建立更新資料
 	 * 
 	 * @param request
 	 * @return
@@ -46,7 +46,7 @@ public class CurrencyServiceV1 {
 	 */
 	public boolean createCurrencyName(CurrencyLangRequest request)
 			throws InvalidArgumentException, DuplicateDataException {
-		if (request == null || StringUtil.isEmpty(request.getCode(), request.getName())) {
+		if (request == null || StringUtil.isEmpty(request.getCode(), request.getName(), request.getLang())) {
 			throw new InvalidArgumentException("Pls input valid argument!");
 		}
 
@@ -58,12 +58,14 @@ public class CurrencyServiceV1 {
 			throw new InvalidArgumentException(String.format("name [%s] length > 15", request.getName()));
 		}
 
-		CurrencyLangDbEntity result = dao.findByCode(request.getCode());
+		CurrencyLangDbEntity result = dao.findByCodeAndLang(request.getCode(), request.getLang());
+
 		if (result != null) {
-			throw new DuplicateDataException(String.format("code [%s] data already exists", request.getCode()));
+			throw new DuplicateDataException(
+					String.format("code [%s] lang [%s] data already exists", request.getCode(), request.getLang()));
 		}
 
-		dao.save(new CurrencyLangDbEntity(request.getCode(), request.getName()));
+		dao.save(new CurrencyLangDbEntity(request.getCode(), request.getLang(), request.getName()));
 
 		return true;
 
@@ -77,23 +79,24 @@ public class CurrencyServiceV1 {
 	 * @throws InvalidArgumentException
 	 * @throws NotFoundException
 	 */
-	public CurrencyLangResponse getCurrencyLang(String code) throws InvalidArgumentException, NotFoundException {
+	public CurrencyLangResponse getCurrencyLang(String code, String lang)
+			throws InvalidArgumentException, NotFoundException {
 
-		if (StringUtil.isEmpty(code)) {
+		if (StringUtil.isEmpty(code, lang)) {
 			throw new InvalidArgumentException("Pls input valid argument!");
 		}
 
 		if (code.length() != 3) {
-			throw new InvalidArgumentException(String.format("code [%s] format fail", code));
+			throw new InvalidArgumentException(String.format("code [%s] fformat fail", code));
 		}
 
-		CurrencyLangDbEntity result = dao.findByCode(code);
+		CurrencyLangDbEntity result = dao.findByCodeAndLang(code, lang);
 
 		if (result == null) {
 			throw new NotFoundException(String.format("code [%s] not found data", code));
 		}
 
-		return new CurrencyLangResponse(result.getCode(), result.getName());
+		return new CurrencyLangResponse(result.getCode(), result.getLang(), result.getName());
 
 	}
 
@@ -105,10 +108,10 @@ public class CurrencyServiceV1 {
 	 * @throws InvalidArgumentException
 	 * @throws NotFoundException
 	 */
-	public CurrencyLangResponse updateCurrencyLang(String code, CurrencyLangRequest request)
+	public CurrencyLangResponse updateCurrencyLang(String code, String lang, CurrencyLangRequest request)
 			throws InvalidArgumentException, NotFoundException {
 
-		if (StringUtil.isEmpty(code, request.getName()) || request == null) {
+		if (StringUtil.isEmpty(code, request.getName(), request.getLang()) || request == null) {
 			throw new InvalidArgumentException("Pls input valid argument!");
 		}
 
@@ -116,16 +119,16 @@ public class CurrencyServiceV1 {
 			throw new InvalidArgumentException(String.format("code [%s] format fail", code));
 		}
 
-		CurrencyLangDbEntity result = dao.findByCode(code);
+		CurrencyLangDbEntity result = dao.findByCodeAndLang(code, lang);
 
 		if (result == null) {
 			throw new NotFoundException(String.format("code [%s] not found data", code));
 		}
 
-		result = new CurrencyLangDbEntity(code, request.getName());
+		result = new CurrencyLangDbEntity(code, request.getLang(), request.getName());
 		dao.save(result);
 
-		return getCurrencyLang(code);
+		return getCurrencyLang(code, lang);
 
 	}
 
@@ -137,7 +140,8 @@ public class CurrencyServiceV1 {
 	 * @throws InvalidArgumentException
 	 * @throws NotFoundException
 	 */
-	public boolean deleteCurrencyLang(String code) throws InvalidArgumentException, EmptyResultDataAccessException {
+	public boolean deleteCurrencyLang(String code, String lang)
+			throws InvalidArgumentException, EmptyResultDataAccessException {
 		if (StringUtil.isEmpty(code)) {
 			throw new InvalidArgumentException("Pls input valid argument!");
 		}
@@ -146,7 +150,7 @@ public class CurrencyServiceV1 {
 			throw new InvalidArgumentException(String.format("code [%s] format fail", code));
 		}
 
-		dao.deleteByCode(code);
+		dao.deleteByCodeAndLang(code, lang);
 
 		return true;
 
