@@ -12,14 +12,14 @@ import javax.persistence.Table;
 public class CurrencyLangDbEntity {
 
 	@Id
-	@Column(nullable = false, length = 3, columnDefinition = "char(3)")
+	@Column(name = "CODE", nullable = false, columnDefinition = "char(3)")
 	private String code;
 
 	@Id
-	@Column(nullable = false, length = 3, columnDefinition = "char(5)")
+	@Column(name = "LANG", nullable = false, columnDefinition = "char(5)")
 	private String lang;
 
-	@Column(nullable = false, length = 15, columnDefinition = "nvarchar(15)")
+	@Column(name = "NAME", nullable = false, columnDefinition = "nvarchar(15)")
 	private String name;
 
 	public CurrencyLangDbEntity() {

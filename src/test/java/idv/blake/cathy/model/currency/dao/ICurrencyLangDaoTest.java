@@ -44,6 +44,8 @@ class ICurrencyLangDaoTest extends BaseUnitTest {
 		assertEquals(1, resultList.size());
 		System.out.println(toJson(resultList));
 
+		dao.deleteAll();
+
 	}
 
 }
